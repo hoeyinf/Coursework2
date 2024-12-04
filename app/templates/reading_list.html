@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% set active_page = 'reading_list' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}<h1 class="text-center" name="reading-list">{{ title }}</h1>{% endblock %}
+
+{% block content %}
+<!--Alerts-->
+<div class="row d-flex justify-content-center m-0">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class='col-8'>
+            <div class="alert alert-dismissible fade show {{ category }} text-center" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p class="text-align-center p-0 m-0">{{ message }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
+
+<!--Display user's reading list-->
+<div class="row d-flex justify-content-center align-items-start w-100 text-center">
+    <!--Alert for successful removal-->
+    <div class="col-8 alert fade show alert-success" style="display:none" role="alert">
+        <p class="text-align-center p-0 m-0 list-change"></p>
+    </div>
+    <form class="d-none" action="/pass_book_id" method="POST" id="pass-book-id"></form>
+    {% for book in reading_list %}
+    <button class="d-none btn" form="pass-book-id" name="book-id" value="v-{{book.id}}" aria-hidden="true" aria-label="{{book.title}}">
+    </button>
+    <div class="col-10 col-md-6 col-lg-5 border border-dark rounded p-2 m-2 book-info" id="v-{{ book.id }}" tabindex="0">
+    <h2 class="ml-2 mr-2">{{ book.title }}<br>
+    <small>{{ book.author }}</small></h2>
+    <!--Display options when user is logged in-->
+    {% if current_user.is_authenticated %}
+        <div>
+            <!-- Display buttons to add/remove to reading list depending on if it's already added or not-->
+            <button class="btn btn-secondary edit-reading-list ml-2 mt-2 mr-2" name="remove" id="{{ book.id }}">Remove from Reading List</button>
+            {% if book in read_books %}
+            <button class="btn btn-secondary post-book mt-2 mr-2" name="post" id="mark-{{ book.id }}" disabled>Book Finished!</button>
+            {% else %}
+            <button class="btn btn-secondary post-book mt-2 mr-2" name="post" id="mark-{{ book.id }}">Mark as Read</button>
+            {% endif %}
+        </div>
+    {% endif %}
+<p class="test"></p>
+</div>
+    {% else %}
+    <p class="p-2 m-2">No books on your reading list. Go add some!</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

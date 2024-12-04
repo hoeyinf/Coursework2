@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}<h1 class="text-center" name="edit-profile">{{ title }}</h1>{% endblock %}
+
+{% block content %}
+<div class="row d-flex justify-content-center">
+    <div class='col-6 border border-dark rounded p-4' role="form" aria-label="Edit Profile">
+        <form action="" method="post" name="edit-profile-form">
+        {{ form.hidden_tag() }}
+
+        <!--Alerts-->
+        <div class="row">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class='col'>
+                    <div class="alert alert-dismissible fade show {{ category }} text-center" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <p class="text-align-center p-0 m-0">{{ message }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!--Display all form validation errors-->
+            {% for error in form.errors.items() %}
+            <div class='col'>
+                <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>{{ error[1][0] }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    <!--Form inputs-->
+    <div class="row">
+        <div class="input-group col">
+            <div class="input-group-prepend">
+                {{ form.first_name.label(class="input-group-text") }}
+            </div>
+            {{ form.first_name(class="form-control", id="first_name") }}
+        </div>
+        <div class="input-group col">
+            <div class="input-group-prepend">
+                {{ form.last_name.label(class="input-group-text") }}
+            </div>
+        {{ form.last_name(class="form-control", id="last_name") }}
+        </div>
+    </div>
+    <div class="input-group">
+        <div class="input-group-prepend">
+            {{ form.username.label(class="input-group-text") }}
+        </div>
+        {{ form.username(class="form-control", id="username") }}
+    </div>
+    <small>Leave password fields blank unless you want to change your password.</small>
+    <div class="input-group">
+        <div class="input-group-prepend">
+            {{ form.password.label(class="input-group-text") }}
+        </div>
+        {{ form.password(class="form-control", id="password") }}
+    </div>
+    <div class="input-group">
+        <div class="input-group-prepend">
+            {{ form.confirm_password.label(class="input-group-text") }}
+        </div>
+        {{ form.confirm_password(class="form-control", id="confirm_password") }}
+    </div>
+    <div class="input-group">
+        <div class="input-group-prepend">
+            {{ form.bio.label(class="input-group-text") }}
+        </div>
+        {{ form.bio(class="form-control", id="bio") }}
+    </div>
+    <div class="d-flex justify-content-center justify-space-between">
+        <button type="submit" class="btn btn-primary mr-2">Submit Changes</button>
+        <button type="button" class="btn btn-danger delete-profile" name="delete">Delete Profile</button>
+    </div>
+</div>
+</form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,144 @@
+/* Text sizing */
+body {
+    font-size: 16px;
+}
+
+/* Navigation bar styling */
+
+.navbar {
+    background-color: #E6E6FA;
+}
+
+.nav-link {
+    font-weight: bold;
+}
+
+.nav-link > span{
+    color: rgb(125, 125, 125);
+}
+
+.nav-link:hover > span{
+    color: rgb(69, 69, 69);
+}
+
+.dropdown-menu > .nav-link.active, .dropdown-menu > .nav-link:hover {
+    background-color: #E6E6FA;
+}
+
+.dropdown-menu > .nav-link.active > span {
+    color: black;
+}
+
+header{
+    margin-top: 5rem;
+}
+
+
+ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    float: left;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+}
+
+h2, h4 {
+    word-wrap: break-word;
+}
+
+/* Button stylings */
+
+.inactive[disabled] {
+    opacity: 1;
+}
+
+button.profile {
+    color: #39006f;
+    border: 1px solid #39006f;
+    background-color: #ffffff;
+}
+
+button.profile:hover {
+    background-color: #1c0036;
+    color: white;
+}
+
+button.profile.active {
+    color: #ffffff;
+    background-color: #39006f;
+}
+
+.btn-primary:not(.like-button) {
+    background-color: #39006f;
+}
+
+.btn-primary:hover:Not(.like-button) {
+    background-color: #1c0036;
+}
+
+
+button[name="search"]{
+    background-color: none;
+    color: #39006f;
+    border: 1px solid #39006f;
+}
+
+button[name="search"]:hover{
+    background-color: #39006f;
+    color: white;
+}
+
+button.view-profile, button.view-book{
+    color: #027bff;
+}
+
+button.view-profile:hover, button.view-book:hover {
+    color: #0058b7;
+    text-decoration: underline;
+}
+
+td{
+    width: 30%;
+}
+
+/* Cookie window */
+.cc-window {
+    background-color: #E6E6FA;
+    border-top: 1px solid black;
+}
+
+.cc-compliance > a {
+    border: 2px solid #39006f;
+    color: #39006f;
+    text-decoration: none;
+}
+
+.cc-compliance:hover {
+    background-color: #d2d2e6;
+}
+
+/* Other miscellaneous */
+
+div.post, div.info, div.book-info {
+    background-color: #f8f8ff;
+}
+
+div[role="form"] {
+    background-color: #f8f8ff;
+}
+
+p.date {
+    color: #646D73;
+}
+
+/* Hover styling only on parent learned from: https://stackoverflow.com/questions/22270078/css-hover-on-a-div-but-not-if-hover-on-his-children */
+div.book-info:hover:not(:has(button:hover)) {
+    background-color: #d2d2e6;
+    cursor: pointer;
+}

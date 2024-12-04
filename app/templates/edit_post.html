@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}<h1 class="text-center" name="edit-post">{{ title }}</h1>{% endblock %}
+
+{% block content %}
+<div class="row d-flex justify-content-center">
+    <div class='col-10 col-lg-6 border border-dark rounded p-4' role="form" aria-label="Edit Post">
+        <form method="post" name="edit-post-form">
+        {{ form.hidden_tag() }}
+
+        <!--Alerts-->
+        <div class="row">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class='col'>
+                    <div class="alert alert-dismissible fade show {{ category }} text-center" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <p class="text-align-center p-0 m-0">{{ message }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!--Display all form validation errors-->
+            {% for error in form.errors.items() %}
+            <div class='col'>
+                <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>{{ error[1][0] }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    <!--Form inputs-->
+    <div class="row">
+    <div class="input-group col-7 col-md-6">
+        <div class="input-group-prepend">
+            {{ form.rating.label(class="input-group-text") }}
+          </div>
+        {{ form.rating(class="form-control", id="rating", placeholder="Enter rating") }}
+        <div class="input-group-append">
+            <span class="input-group-text" id="basic-addon2">%</span>
+          </div>
+    </div>
+</div>
+<div class="row">
+    <div class="input-group col">
+        <div class="input-group-prepend">
+            {{ form.review.label(class="input-group-text") }}
+          </div>
+        {{ form.review(class="form-control", id="review", rows="5") }}
+    </div>
+</div>
+    <div class="d-flex justify-content-center justify-space-between">
+        <button type="submit" class="btn btn-primary mr-2">Submit Changes</button>
+        <button type="button" class="btn btn-danger delete-book" name="delete" id="{{ book_id }}">Delete Post</button>
+    </div>
+</div>
+</form>
+</div>
+
+{% endblock %}

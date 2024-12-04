@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% set active_page = 'users' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}<h1 class="text-center" name="search-user" id="search-user">{{ title }}</h1>{% endblock %}
+
+{% block content %}
+<!--Alerts-->
+<div class="row d-flex justify-content-center m-0">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class='col-8'>
+            <div class="alert alert-dismissible fade show {{ category }} text-center" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p class="text-align-center p-0 m-0">{{ message }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
+<!--Search bar-->
+<form class="form-inline justify-content-center mb-4" action="" method="post" role="search" aria-labelledby="search-user" name="search-user-form">
+    {{ form.hidden_tag() }}
+    {{ form.search(class="form-control mr-2 mt-2 w-75", type="Search", placeholder="Enter user's name or username", aria_label="Search") }}
+    <button type="submit" class="btn btn-outline-primary search-book mt-2" name="search">Search</button>
+</form>
+
+<!--Display results-->
+<div class="row d-flex justify-content-center align-items-start w-100 text-center">
+    <form class="d-none" action="/profile" id="profile-form" method='POST'></form>
+    {% if msg != None %}<p class="col-7 font-weight-light">{{ msg }}</p>{% endif %}
+    <!--Alert for successful follow/unfollow-->
+    <div class="col-12 alert fade show alert-success" style="display:none" role="alert">
+        <p class="text-align-center p-0 m-0 list-change"></p>
+    </div>
+    {% for user in results %}
+    <div class="col-11 col-md-8 col-lg-5 border border-dark rounded p-2 m-2 info" tabindex="0">
+    <button class="btn view-profile p-0 btn-lg mr-2" form="profile-form" name="view" value="{{ user.id }}">@{{ user.username }}</button>
+    <p class="ml-2 mr-2 mb-0">{{ user.first_name }} {{ user.last_name }}</p>
+    <!--Display follow button when user is logged in-->
+        <div>
+        {% if current_user.is_authenticated %}
+        {% if user.id in followed_users %}
+            <button class="btn btn-secondary edit-following ml-2 mt-2 mr-2" name="unfollow" id="{{ user.id }}">Unfollow</button>
+        {% elif user.id != current_user.id %}
+            <button class="btn btn-secondary edit-following mt-2 mt-2 mr-2" name="follow" id="{{ user.id }}">Follow</button>
+        {% else %}
+            <p>This is you!</p>
+        {% endif %}
+        {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% if current_user.is_authenticated %}
+{% if current_user.id == user.id %}
+{% set active_page = 'profile' %}
+{% endif %}
+{% endif %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}<h1 class="text-center" name="edit-profile">@{{ user.username }}</h1>{% endblock %}
+
+{% block content %}
+<!--Alerts-->
+<div class="row d-flex justify-content-center m-0">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class='col-8'>
+            <div class="alert alert-dismissible fade show {{ category }} text-center" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p class="text-align-center p-0 m-0">{{ message }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
+<!--Display user profile and posts-->
+<div class="row d-flex justify-content-center text-center">
+    <div class="col-10 user-info">
+        <h2>{{ user.first_name }} {{ user.last_name }}</h2><p>
+            {% if user.bio != None%}
+            {{ user.bio }}<br>
+            {% endif %}
+            <p class="font-weight-light">Joined on {{ user.date_joined.strftime('%-d %b %Y') }}</p>
+        </p>
+        {% if current_user.is_authenticated %}
+            {% if user.id == current_user.id %}<button class="btn btn-secondary edit-profile" name="edit">Edit Profile</button>
+            {% elif current_user in followed_by %}<button class="btn btn-secondary edit-following ml-2 mt-2 mr-2" name="unfollow" id="{{ user.id }}">Unfollow</button>
+            {% else %}<button class="btn btn-secondary edit-following mt-2 mr-2" name="follow" id="{{ user.id }}">Follow</button>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<!--Display user's posts/followers/following-->
+<div class="row d-flex justify-content-center align-items-start w-100 text-center m-2">
+    <!--AJAX alerts-->
+    <div class="col-8 alert fade show alert-success" style="display:none" role="alert">
+            <p class="text-align-center p-0 m-0 list-change"></p>
+    </div>
+    <div class="col-10 col-md-6 btn-group mb-2" role="group" aria-label="Profile information options">
+        <button class="btn profile active" name="posts" id="posts-button" aria-pressed="true">Posts <br><strong>{{ posts|length }}</strong></button>
+        <button class="btn profile" name="following" id="following-button" aria-pressed="false">Following <br><strong>{{ followed_users|length }}</strong></button>
+        <button class="btn profile" name="followers" id="followers-button" aria-pressed="false">Followers <br><strong>{{ followed_by|length }}</strong></button>
+    </div>
+    <!--Posts-->
+<form class="d-none" action="/profile" id="profile-form" method='POST'></form>
+<form class="d-none" action="/pass_book_id" method="POST" id="pass-book-id"></form>
+<div class="posts col-10 col-md-8">
+    {% if posts|length == 0 %}
+        {% if current_user.is_authenticated %}
+            {% if current_user.id == user.id %}
+            <p>No posts to show. Go read a book!</p>
+            {% endif %}
+        {% else %}
+        <p>No posts to show.</p>
+        {% endif %}
+    {% endif %}
+    {% for post in posts %}
+    <div class="border border-dark rounded p-2 m-2 post" tabindex="0">
+        <div class="ml-2 mr-2">
+            <button class="btn view-profile p-0" form="profile-form" name="view" value="{{ post.User.id }}">@{{ post.User.username }}</button>
+            <p class="mb-0">Finished reading <button class="mb-1 p-0 btn view-book" form="pass-book-id" name="book-id" value="v-{{post.Book.id}}"><em>{{ post.Book.title }}</em></button> by {{ post.Book.author }}</p>
+            <p class="date mt-0">{{ post.Post.date.strftime('%a %-d %b %Y, %H:%M') }}</p>
+    {% if post.Post.rating != None and post.Post.rating != "" %}
+    Rated: {{ post.Post.rating }}%<br>
+    {% else %}
+    No rating given
+    {% endif %}</div>
+    <p class="text-left ml-2 mr-2">
+    {% if post.Post.review != None and post.Post.review != "" %}
+    <strong>Review</strong><br> {{ post.Post.review }}</p>
+    {% endif %}
+    </p>
+    {% if current_user.is_authenticated %}
+    <div>
+    {% if post.Post in liked %}
+    <button class="btn btn-primary like-button" id="{{post.Post.user_id}}-{{post.Post.book_id}}" aria-label="{{ post.Post.likes }} likes" name="unlike" aria-pressed="true"><em class="fa fa-thumbs-up"></em> {{ post.Post.likes }}</button>
+    {% else %}
+    <button class="btn btn-outline-primary like-button" id="{{post.Post.user_id}}-{{post.Post.book_id}}" aria-label="{{ post.Post.likes }} likes" name="like" aria-pressed="false"><em class="fa fa-thumbs-up"></em> {{ post.Post.likes }}</button>
+    {% endif %}
+    </div>
+    {% if current_user.id == post.Post.user_id %}
+    <button class="btn btn-secondary edit-post mt-2" form="pass-book-id" name="book-id" value="e-{{post.Post.book_id}}">
+        Edit Post
+    </button>
+    {% endif %}
+    {% else %}
+    <button class="btn btn-primary like-button inactive" aria-label="{{ post.Post.likes }} likes" disabled><em class="fa fa-thumbs-up"></em> {{ post.Post.likes }}</button>
+    {% endif %}
+</div>
+    {% endfor %}
+</div>
+    <!--Following-->
+    <table class="col-10 col-md-7 table following table-hover table-sm vertical-align-middle" aria-labelledby="following-button">
+        <tbody>
+    {% for following in followed_users %}
+    <tr class="{{ following.id }}">
+        <td><button class="btn view-profile p-0" form="profile-form" name="view" value="{{ following.id }}">@{{ following.username }}</button></td>
+        {% if current_user.is_authenticated %}
+        {% if current_user.id == user.id %}<td><button class="btn btn-secondary edit-following" name="unfollow" id="following-{{ following.id }}">Unfollow</button></td>{% endif %}
+        {% endif %}
+    </tr>
+    {% endfor %}
+    <!--Pre-emptively make rows for users in followed_by list, so that they can be displayed if user follows them back-->
+    {% for follower in followed_by %}
+        {% if follower not in followed_users %}
+        <tr class="{{ follower.id }}" style="display:none;">
+            <td><button class="btn view-profile p-0" form="profile-form" name="view" value="{{ follower.id }}">@{{ follower.username }}</button></td>
+            {% if current_user.is_authenticated %}
+                {% if current_user.id == user.id %}<td><button class="btn btn-secondary edit-following" name="follow" id="following-{{ follower.id }}">Follow</button></td>
+                {% endif %}
+            {% endif %}
+        </tr>
+        {% endif %}
+    {% endfor %}
+        </tbody>
+    </table>
+<!--Followers-->
+    <table class="col-10 col-md-7 table followers table-hover table-sm vertical-align-middle" aria-labelledby="followers-button">
+        <tbody>
+            <!--Current user (show/hide if they follow/unfollow)-->
+            {% if current_user.is_authenticated %}
+            <tr class="{{ user.id }}" style="display: {{ 'none' if current_user not in followed_by }}">
+                <td><button class="btn view-profile p-0" form="profile-form" name="view" value="{{ current_user.id }}">@{{ current_user.username }}</button></td>
+            </tr>
+            {% endif %}
+    {% for follower in followed_by %}
+        <tr>
+        {% if current_user.is_authenticated %}
+            {% if follower.id != current_user.id %}
+            <td><button class="btn view-profile p-0" form="profile-form" name="view" value="{{ follower.id }}">@{{ follower.username }}</button></td>
+            {% endif %}
+        {% else %}
+        <td><button class="btn view-profile p-0" form="profile-form" name="view" value="{{ follower.id }}">@{{ follower.username }}</button></td>
+        {% endif %}
+        {% if current_user.is_authenticated %}
+        {% if user == current_user %}
+            {% if follower not in followed_users and current_user != follower %}
+            <td><button class="btn btn-secondary edit-following" name="follow" id="follower-{{ follower.id }}">Follow</button></td>
+            {% elif current_user != follower %}
+            <td><button class="btn btn-secondary edit-following follower" name="unfollow" id="follower-{{ follower.id }}">Unfollow</button></td>
+            {% endif %}
+        {% endif %}
+        {% endif %}
+    </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

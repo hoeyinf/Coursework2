@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('.static', filename='style.css')}}">
+    <title>{% block title %}{% endblock%}</title>
+    <!--favicon created using: https://www.favicon.cc/-->
+    <link rel="icon" type="image/x-icon" href="{{url_for('.static', filename='favicon.ico')}}">
+    <!--Like button stylesheet-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!--External jQuery in /static-->
+    <script src="{{ url_for('static', filename='script.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='ajax_js.js') }}" ></script>
+    <!--Cookie Consent-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.4/cookieconsent.min.css" integrity="sha512-sJmoczhYGI1OkB30W0yCQ91kqtYhsQNaVSvF/Fja4vI6kf8GxKUX9+RNF7PLlmd3P56MFQge6Qf98Q+j6iGOWw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.4/cookieconsent.min.js" integrity="sha512-CO0d9N3ml6Ik8P3mGy6j1Wx5KWnWzynQbiRJaZhM32FP99KRnT7O+hNNGGnuVktxjeYFU5xn9Kfb7c132wnbKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+  <body>
+  
+    <!--Navigation bar-->
+    <!--Active pages based off: https://stackoverflow.com/questions/68556669/how-to-add-active-class-in-bootstrap-with-flask-->
+   <nav class="navbar navbar-expand-sm navbar-light border-bottom mb-2 fixed-top">
+    <a class="navbar-brand" href="/"><img width="20" height="20" src="{{url_for('.static', filename='favicon.png')}}" alt="BookLog Logo">  <strong>BookLog</strong></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent" role="navigation" aria-label="Site">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item {{ 'active' if active_page=='feed'}}"><a class="nav-link" href="/" active>Home</a></li>
+            <li class="nav-item dropdown {{ 'active' if active_page=='books' or active_page=='users'}}">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Search
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="nav-link {{ 'active' if active_page=='books'}}" href="/books"><span>Books</span></a>
+                    <a class="nav-link {{ 'active' if active_page=='users'}}" href="/users"><span>Users</span></a>
+                </div>
+              </li>
+          {% if current_user.is_authenticated %}
+          <li class="nav-item {{ 'active' if active_page=='reading_list'}}"><a class="nav-link" href="/reading_list" active>Reading List</a></li>
+          <li class="nav-item {{ 'active' if active_page=='profile'}}"><a class="nav-link" href="/profile" active>Profile</a></li>
+          <li class="nav-item"><a class="nav-link" href="/logout" active>Log Out</a></li>
+          {% else %}
+          <li class="nav-item {{ 'active' if active_page=='signup'}}"><a class="nav-link" href="/signup" active>Sign Up</a></li>
+          <li class="nav-item {{ 'active' if active_page=='login'}}"><a class="nav-link" href="/login" active>Log In</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+
+    <header>{% block header %}{%endblock%}</header>
+    <div class="container" role="main">
+      <!--Content provided by other html files-->
+            {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>
